@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ menu_item.name }} - Canteen Menu Rater{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl shadow-xl p-6">
+    <!-- Back Button -->
+    <div class="mb-6">
+        <a href="{% url 'menu:menu_list' %}" class="inline-flex items-center text-amber-600 hover:text-amber-700">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Menu
+        </a>
+    </div>
+
+    <!-- Product Details -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Left Column: Image and Basic Info -->
+        <div>
+            {% if menu_item.image %}
+            <div class="rounded-xl overflow-hidden shadow-lg mb-6">
+                <img src="{{ menu_item.image.url }}" alt="{{ menu_item.name }}" class="w-full h-64 object-cover">
+            </div>
+            {% endif %}
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ menu_item.name }}</h1>
+                <div class="flex items-center mb-4">
+                    <span class="text-yellow-500">★</span>
+                    <span class="text-gray-700 ml-1">{{ menu_item.average_rating|floatformat:1 }}</span>
+                    <span class="text-gray-500 text-sm ml-2">({{ menu_item.ratings.count }} ratings)</span>
+                </div>
+                <p class="text-gray-600 mb-4">{{ menu_item.description }}</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-amber-600 text-xl font-medium">₹{{ menu_item.price }}</span>
+                    <span class="text-sm text-gray-500">{{ menu_item.category.name }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Ratings and Comments -->
+        <div>
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Rate this Item</h2>
+                {% if user.is_authenticated %}
+                <div class="flex justify-center space-x-2 mb-4">
+                    {% for i in "12345" %}
+                    <button class="text-3xl text-gray-300 hover:text-yellow-500 transition-colors" onclick="setRating('{{ forloop.counter }}')">★</button>
+                    {% endfor %}
+                </div>
+                <textarea id="rating-comment" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-amber-500 focus:border-amber-500 mb-4" 
+                          placeholder="Add a comment (optional)"></textarea>
+                <button id="submit-rating" class="w-full px-4 py-2 bg-amber-600 text-white text-base font-medium rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+                    Submit Rating
+                </button>
+                {% else %}
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <p class="text-amber-700 text-center">Please <a href="{% url 'account_login' %}?next={{ request.path }}" class="font-medium underline">sign in</a> to rate this item.</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Comments</h2>
+                <div id="comments-list" class="space-y-4">
+                    {% for rating in menu_item.ratings.all %}
+                    <div class="bg-amber-50 p-4 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <span class="text-yellow-500">★</span>
+                            <span class="text-gray-700 ml-1">{{ rating.rating }}</span>
+                            <span class="text-gray-500 text-sm ml-2">{{ rating.created_at|date:"F j, Y" }}</span>
+                        </div>
+                        {% if rating.comment %}
+                        <p class="text-gray-600">{{ rating.comment }}</p>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <p class="text-gray-500 text-center">No comments yet</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if user.is_authenticated %}
+<script>
+const itemId = '{{ menu_item.id }}';
+let currentRating = 0;
+
+function setRating(rating) {
+    currentRating = rating;
+    const stars = document.querySelectorAll('button.text-3xl');
+    stars.forEach((star, index) => {
+        if (index < rating) {
+            star.classList.remove('text-gray-300');
+            star.classList.add('text-yellow-500');
+        } else {
+            star.classList.remove('text-yellow-500');
+            star.classList.add('text-gray-300');
+        }
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.getElementById('submit-rating').addEventListener('click', async () => {
+    if (!currentRating) {
+        alert('Please select a rating');
+        return;
+    }
+
+    const comment = document.getElementById('rating-comment').value;
+    const csrftoken = getCookie('csrftoken');
+    
+    try {
+        const response = await fetch("{% url 'menu:rate_item' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({
+                item_id: itemId,
+                rating: currentRating,
+                comment: comment
+            })
+        });
+
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            const data = await response.json();
+            alert(data.error || 'Failed to submit rating');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while submitting the rating');
+    }
+});
+</script>
+{% endif %}
+{% endblock %}

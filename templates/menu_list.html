@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Menu - Canteen Menu Rater{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl shadow-xl p-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div class="flex items-center">
+            <h1 class="text-3xl font-bold text-gray-900">Menu Items</h1>
+        </div>
+        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <select id="category-filter" class="rounded-lg border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}" {% if selected_category == category.id %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+                {% endfor %}
+            </select>
+            <select id="sort-by" class="rounded-lg border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500">
+                <option value="name">Sort by Name</option>
+                <option value="rating">Sort by Rating</option>
+                <option value="price">Sort by Price</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for item in menu_items %}
+        <div class="bg-white rounded-xl shadow-sm border border-amber-100 p-6 hover-scale">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold text-gray-800">{{ item.name }}</h2>
+                <div class="flex items-center">
+                    <span class="text-yellow-500">★</span>
+                    <span class="text-gray-700 ml-1">{{ item.average_rating|floatformat:1 }}</span>
+                </div>
+            </div>
+            <p class="text-gray-600 mb-4">{{ item.description }}</p>
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-amber-600 font-medium">₹{{ item.price }}</span>
+                <span class="text-sm text-gray-500">{{ item.category.name }}</span>
+            </div>
+            <a href="{% url 'menu:menu_item_detail' item.id %}" class="block w-full bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors text-center">
+                View Details
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-span-3 text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">No menu items found</h3>
+            <p class="mt-1 text-sm text-gray-500">Try changing your filters or check back later.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Filter and sort functionality
+document.getElementById('category-filter').addEventListener('change', function() {
+    const categoryId = this.value;
+    window.location.href = `{% url 'menu:menu_list' %}?category=${categoryId}`;
+});
+
+document.getElementById('sort-by').addEventListener('change', function() {
+    const sortBy = this.value;
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('sort', sortBy);
+    window.location.href = currentUrl.toString();
+});
+</script>
+{% endblock %} 

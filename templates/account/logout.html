@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Sign Out - Canteen Menu Rater{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center" style="height: calc(100vh - 13.5rem)">
+    <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
+        <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-6">
+            Sign Out
+        </h2>
+        <p class="text-center text-gray-600 mb-8">Are you sure you want to sign out?</p>
+        
+        <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+            {% endif %}
+            
+            <div class="flex justify-center space-x-4">
+                <button type="submit" class="px-6 py-2 bg-amber-600 text-white text-base font-medium rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+                    Sign Out
+                </button>
+                <a href="{% url 'menu:home' %}" class="px-6 py-2 bg-gray-200 text-gray-700 text-base font-medium rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 
