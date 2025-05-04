@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% load account socialaccount %}
 
 {% block title %}Login - Canteen Menu Rater{% endblock %}
 
@@ -12,7 +11,7 @@
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600">
             Or
-            <a href="{% url 'account_signup' %}" class="font-medium text-amber-600 hover:text-amber-500">
+            <a href="{% url 'users:register' %}" class="font-medium text-amber-600 hover:text-amber-500">
                 create a new account
             </a>
         </p>
@@ -36,15 +35,11 @@
         </div>
         {% endif %}
 
-        <form class="mt-6 space-y-4" method="POST" action="{% url 'account_login' %}">
+        <form class="mt-6 space-y-4" method="POST" action="{% url 'login' %}">
             {% csrf_token %}
-            {% if redirect_field_value %}
-                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
-            {% endif %}
-            
             <div>
-                <label for="id_login" class="sr-only">Email address</label>
-                <input id="id_login" name="login" type="email" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm" placeholder="Email address">
+                <label for="id_login" class="sr-only">Username or Email</label>
+                <input id="id_login" name="username" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm" placeholder="Username or Email">
             </div>
             <div>
                 <label for="id_password" class="sr-only">Password</label>
@@ -57,12 +52,6 @@
                     <label for="id_remember" class="ml-2 block text-sm text-gray-900">
                         Remember me
                     </label>
-                </div>
-
-                <div class="text-sm">
-                    <a href="{% url 'account_reset_password' %}" class="font-medium text-amber-600 hover:text-amber-500">
-                        Forgot your password?
-                    </a>
                 </div>
             </div>
 
@@ -77,37 +66,6 @@
                 </button>
             </div>
         </form>
-
-        {% get_providers as socialaccount_providers %}
-        {% if socialaccount_providers %}
-        <div class="mt-6">
-            <div class="relative">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-300"></div>
-                </div>
-                <div class="relative flex justify-center text-sm">
-                    <span class="px-2 bg-white text-gray-500">
-                        Or continue with
-                    </span>
-                </div>
-            </div>
-
-            <div class="mt-6 grid grid-cols-2 gap-3">
-                {% for provider in socialaccount_providers %}
-                <div>
-                    <a href="{% provider_login_url provider.id process='login' %}" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                        <span class="sr-only">Sign in with {{ provider.name }}</span>
-                        {% if provider.name == 'Google' %}
-                        <svg class="w-5 h-5" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
-                        </svg>
-                        {% endif %}
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
     </div>
 </div>
 {% endblock %} 

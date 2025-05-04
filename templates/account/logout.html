@@ -11,7 +11,7 @@
         </h2>
         <p class="text-center text-gray-600 mb-8">Are you sure you want to sign out?</p>
         
-        <form method="post" action="{% url 'account_logout' %}">
+        <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             {% if redirect_field_value %}
                 <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">

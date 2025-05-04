@@ -1,0 +1,287 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Canteen Administrator Dashboard{% endblock %}
+
+{% block extrastyle %}
+<style>
+    :root {
+        --primary: #FFD700;
+        --secondary: #FFE44D;
+        --accent: #FFC107;
+        --primary-fg: #1A1A1A;
+        --body-fg: #1A1A1A;
+        --body-bg: #fff;
+        --body-quiet-color: #666;
+        --body-loud-color: #1A1A1A;
+        --header-color: #000000;
+        --header-branding-color: #D35400;
+        --header-bg: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        --header-link-color: #1A1A1A;
+        --breadcrumbs-fg: #1A1A1A;
+        --breadcrumbs-link-fg: #1A1A1A;
+        --breadcrumbs-bg: #FFE44D;
+        --link-fg: #1A1A1A;
+        --link-hover-color: #D35400;
+        --link-selected-fg: #D35400;
+        --hairline-color: #e8e8e8;
+        --border-color: #e8e8e8;
+        --error-fg: #ba2121;
+        --message-success-bg: #dfd;
+        --message-warning-bg: #ffc;
+        --message-error-bg: #ffefef;
+        --selected-bg: #FFF9C4;
+        --selected-row: #FFF9C4;
+        --button-fg: #1A1A1A;
+        --button-bg: #FFD700;
+        --button-hover-bg: #D35400;
+        --default-button-bg: #FFE44D;
+        --default-button-hover-bg: #D35400;
+        --close-button-bg: #888;
+        --close-button-hover-bg: #747474;
+        --delete-button-bg: #ba2121;
+        --delete-button-hover-bg: #a41515;
+        --object-tools-fg: #1A1A1A;
+        --object-tools-bg: #FFE44D;
+        --object-tools-hover-bg: #D35400;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: var(--body-fg);
+        background: #f5f5f5;
+    }
+
+    #header {
+        background: var(--header-bg);
+        color: var(--header-color);
+        padding: 1rem;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    #header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.1) 100%);
+        z-index: 0;
+    }
+
+    #branding {
+        position: relative;
+        z-index: 1;
+    }
+
+    #branding h1 {
+        color: var(--header-branding-color);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-weight: bold;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--primary-fg);
+        font-size: 1.2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .module h2, .module caption, .inline-group h2 {
+        background: var(--primary);
+        color: var(--header-color);
+        font-weight: 600;
+        padding: 12px;
+        border-radius: 4px 4px 0 0;
+    }
+
+    div.breadcrumbs {
+        background: var(--secondary);
+        color: var(--header-color);
+        padding: 12px;
+        border-radius: 4px;
+        margin: 1rem 0;
+    }
+
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background: var(--primary);
+        color: var(--header-color);
+        border-radius: 4px;
+        padding: 8px 16px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .button:active, input[type=submit]:active, input[type=button]:active,
+    .button:focus, input[type=submit]:focus, input[type=button]:focus,
+    .button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover {
+        background: var(--button-hover-bg);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .button.default, input[type=submit].default, .submit-row input.default {
+        background: var(--default-button-bg);
+    }
+
+    .button.default:active, input[type=submit].default:active,
+    .button.default:focus, input[type=submit].default:focus,
+    .button.default:hover, input[type=submit].default:hover {
+        background: var(--default-button-hover-bg);
+        color: white;
+    }
+
+    .login #container {
+        background: var(--body-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        margin: 2rem auto;
+    }
+
+    .login .submit-row {
+        padding: 1em 0 0 0;
+        margin: 0;
+        text-align: center;
+    }
+
+    .login .form-row {
+        padding: 8px 0;
+    }
+
+    .login .form-row label {
+        display: block;
+        padding: 4px 0;
+        font-weight: 500;
+        color: var(--body-fg);
+    }
+
+    .login .form-row input {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 4px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .login .form-row input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
+        outline: none;
+    }
+
+    .login .submit-row input {
+        width: auto;
+        padding: 10px 24px;
+        font-size: 1rem;
+    }
+
+    /* Modern table styling */
+    #changelist-form table {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    #changelist-form table thead th {
+        background: var(--secondary);
+        color: var(--header-color);
+        padding: 12px;
+        font-weight: 600;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    #changelist-form table tbody td {
+        padding: 12px;
+        border-bottom: 1px solid var(--hairline-color);
+        transition: background-color 0.3s ease;
+    }
+
+    #changelist-form table tbody tr:hover {
+        background: var(--selected-row);
+    }
+
+    /* Form styling */
+    .form-row {
+        padding: 8px 0;
+    }
+
+    .form-row label {
+        font-weight: 500;
+        color: var(--body-fg);
+    }
+
+    .form-row input, .form-row textarea, .form-row select {
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .form-row input:focus, .form-row textarea:focus, .form-row select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
+        outline: none;
+    }
+
+    /* Object tools */
+    .object-tools a {
+        background: var(--object-tools-bg);
+        color: var(--object-tools-fg);
+        border-radius: 4px;
+        padding: 8px 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .object-tools a:hover {
+        background-color: var(--button-hover-bg);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    a:link, a:visited {
+        color: var(--header-branding-color);
+    }
+
+    a:hover {
+        color: var(--link-hover-color);
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">Canteen Administrator Dashboard</a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %} 

@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% load account socialaccount %}
 
 {% block title %}Sign Up - Canteen Menu Rater{% endblock %}
 
@@ -12,7 +11,7 @@
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600">
             Already have an account?
-            <a href="{% url 'account_login' %}" class="font-medium text-amber-600 hover:text-amber-500">
+            <a href="{% url 'login' %}" class="font-medium text-amber-600 hover:text-amber-500">
                 Sign in instead
             </a>
         </p>
@@ -36,7 +35,7 @@
         </div>
         {% endif %}
 
-        <form class="mt-6 space-y-4" method="POST" action="{% url 'account_signup' %}">
+        <form class="mt-6 space-y-4" method="POST" action="{% url 'users:register' %}">
             {% csrf_token %}
             {% if redirect_field_value %}
                 <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">

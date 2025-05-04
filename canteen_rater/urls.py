@@ -18,10 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from users.views import CustomLogoutView
+from django.contrib.auth import views as auth_views
+from menu.views import home
 
 urlpatterns = [
+    path('', home, name='home'),
     path('admin/', admin.site.urls),
-    path("__reload__/", include("django_browser_reload.urls")),
-    path('', include('menu.urls')),
-    path('accounts/', include('allauth.urls')),
+    path('menu/', include('menu.urls', namespace='menu')),
+    path('users/', include('users.urls', namespace='users')),
+    path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
+    path('logout/', CustomLogoutView.as_view(next_page='/'), name='logout'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

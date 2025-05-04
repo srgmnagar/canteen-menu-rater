@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Dashboard - Canteen Menu Rater{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-2xl shadow-xl p-8 max-w-3xl mx-auto mt-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-4">Welcome, {{ user.username }}!</h1>
+    <p class="mb-6 text-gray-700">Get personalized recommendations based on your needs:</p>
+    <div class="flex flex-wrap gap-4 mb-8">
+        <a href="?option=snack" class="px-4 py-2 rounded-lg bg-amber-200 hover:bg-amber-300 text-amber-900 font-semibold {% if selected_option == 'snack' %}ring-2 ring-amber-500{% endif %}">I want a snack</a>
+        <a href="?option=study" class="px-4 py-2 rounded-lg bg-blue-200 hover:bg-blue-300 text-blue-900 font-semibold {% if selected_option == 'study' %}ring-2 ring-blue-500{% endif %}">I need to study a lot</a>
+        <a href="?option=healthy" class="px-4 py-2 rounded-lg bg-green-200 hover:bg-green-300 text-green-900 font-semibold {% if selected_option == 'healthy' %}ring-2 ring-green-500{% endif %}">I want something healthy</a>
+        <a href="?option=dessert" class="px-4 py-2 rounded-lg bg-pink-200 hover:bg-pink-300 text-pink-900 font-semibold {% if selected_option == 'dessert' %}ring-2 ring-pink-500{% endif %}">I want dessert</a>
+        <a href="?option=fancy" class="px-4 py-2 rounded-lg bg-purple-200 hover:bg-purple-300 text-purple-900 font-semibold {% if selected_option == 'fancy' %}ring-2 ring-purple-500{% endif %}">I want to feel fancy</a>
+        <a href="?option=spicy" class="px-4 py-2 rounded-lg bg-red-200 hover:bg-red-300 text-red-900 font-semibold {% if selected_option == 'spicy' %}ring-2 ring-red-500{% endif %}">I want something spicy</a>
+        <a href="?option=emotional" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 text-gray-900 font-semibold {% if selected_option == 'emotional' %}ring-2 ring-gray-500{% endif %}">I want to eat my feelings</a>
+        <a href="/dashboard/" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold {% if not selected_option %}ring-2 ring-gray-500{% endif %}">Surprise Me</a>
+    </div>
+    <div class="mb-4 text-center text-lg text-amber-700 font-semibold">{{ funny_message }}</div>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Recommended for you:</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for item in recommendations %}
+        <div class="bg-gray-50 rounded-xl p-6 shadow-sm hover-scale">
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ item.name }}</h3>
+            <p class="text-gray-600 mb-2">{{ item.description }}</p>
+            <span class="text-amber-600 font-medium">₹{{ item.price }}</span>
+        </div>
+        {% empty %}
+        <div class="col-span-2 text-center py-8 text-gray-500">No recommendations found. Try another option!</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

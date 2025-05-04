@@ -1,0 +1,96 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .login {
+        background: var(--body-bg);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .login .form-row {
+        padding: 8px 0;
+    }
+
+    .login .form-row label {
+        display: block;
+        padding: 4px 0;
+        font-weight: bold;
+    }
+
+    .login .form-row input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .login .submit-row {
+        padding: 1em 0 0 0;
+        margin: 0;
+        text-align: center;
+    }
+
+    .login .submit-row input {
+        background: var(--button-bg);
+        color: var(--button-fg);
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    }
+
+    .login .submit-row input:hover {
+        background: var(--button-hover-bg);
+    }
+
+    #container {
+        background: var(--body-bg);
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    #header {
+        background: var(--header-bg);
+        color: var(--header-color);
+        border-radius: 8px 8px 0 0;
+    }
+
+    #branding h1 {
+        color: var(--header-branding-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <form action="{{ app_path }}" method="post" id="login-form">
+        {% csrf_token %}
+        <div class="form-row">
+            {{ form.username.errors }}
+            {{ form.username.label_tag }} {{ form.username }}
+        </div>
+        <div class="form-row">
+            {{ form.password.errors }}
+            {{ form.password.label_tag }} {{ form.password }}
+            <input type="hidden" name="next" value="{{ next }}">
+        </div>
+        {% url 'admin_password_reset' as password_reset_url %}
+        {% if password_reset_url %}
+        <div class="password-reset-link">
+            <a href="{{ password_reset_url }}">{% translate 'Forgotten your password or username?' %}</a>
+        </div>
+        {% endif %}
+        <div class="submit-row">
+            <input type="submit" value="{% translate 'Log in' %}">
+        </div>
+    </form>
+</div>
+{% endblock %} 

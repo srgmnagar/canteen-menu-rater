@@ -16,11 +16,18 @@
                         Join our community to explore, rate, and share your thoughts on the best canteen menu items.
                     </p>
                     <div class="mt-8 flex">
-                        <div class="inline-flex rounded-md shadow">
+                        <div class="inline-flex rounded-md shadow mr-4">
                             <a href="{% url 'menu:menu_list' %}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50">
                                 View Menu
                             </a>
                         </div>
+                        {% if user.is_superuser %}
+                        <div class="inline-flex rounded-md shadow">
+                            <a href="/admin/" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-yellow-500 hover:bg-yellow-600 transition">
+                                Admin Dashboard
+                            </a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="mt-8 lg:mt-0">

@@ -32,10 +32,12 @@
                         <a href="{% url 'menu:home' %}" class="text-2xl font-bold text-amber-600">Canteen Menu Rater</a>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                        <a href="{% url 'menu:home' %}" class="border-amber-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        <a href="{% url 'menu:home' %}"
+                           class="{% if request.resolver_match.url_name == 'home' %}border-amber-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Home
                         </a>
-                        <a href="{% url 'menu:menu_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        <a href="{% url 'menu:menu_list' %}"
+                           class="{% if request.resolver_match.url_name == 'menu_list' %}border-amber-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Menu
                         </a>
                     </div>
@@ -43,14 +45,18 @@
                 <div class="hidden sm:ml-6 sm:flex sm:items-center">
                     {% if user.is_authenticated %}
                         <div class="flex items-center space-x-4">
+                            <a href="{% url 'menu:user_dashboard' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Dashboard</a>
                             <span class="text-gray-700">Welcome, {{ user.username }}</span>
-                            <a href="{% url 'account_logout' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+                            <a href="{% url 'logout' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
                                 Logout
                             </a>
                         </div>
                     {% else %}
-                        <a href="{% url 'account_login' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+                        <a href="{% url 'login' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
                             Login
+                        </a>
+                        <a href="{% url 'users:register' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+                            Register
                         </a>
                     {% endif %}
                 </div>
